@@ -1,8 +1,10 @@
-import React,{ Component } from "react";
-import { nanoid } from 'nanoid';
+import React, {Component} from "react";
+import { nanoid } from "nanoid";
+import ContactForm from "./ContactForm/ContactForm";
+import ContactList from "./ContactList/ContactList";
 
 class App extends Component {
-  state = {
+  state = { 
     contacts: [
       {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
       {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
@@ -10,69 +12,46 @@ class App extends Component {
       {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
     ],
     filter: '',
-    name: '',
-    number: ''
+   } 
+
+  formSubmit = data => {
+    console.log(data);
+
+    const newContact = {
+        id: nanoid(),
+        name: data.name,
+        number: data.number
+      };
+
+    this.setState(prevState => ({
+   
+      contacts: [...prevState.contacts, newContact],
+      name: '',
+      number: '',
+    }))
+  } 
+
+  deleteContact = (contactId) => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }));
   }
 
-  nameId = nanoid();
 
-  handleChange = e => {
-    this.setState({ name: e.target.value });
-  }
-
-  handleChangeNumber = e => {
-    this.setState({ number: e.target.value });
-  }
-
-  handleSubmit = e => {
-    e.preventDefault();
-    console.log(`Signed up as: ${this.state.name}`);
-    this.addContact();
-  };
-
-  addContact = () => {
-    this.setState({...this.state.contacts.push(this.state.name)})
-    this.setState({...this.state.contacts.push(this.state.number)})
-  }
-
-
-  render() {
-
-    return (
-  <div>
-      <form onSubmit={this.handleSubmit}>
-        <h2>Phonebook</h2>
-        <label htmlFor={this.nameId}>Name
+  render() { 
+    return (<>
+    <h1>Phonebook</h1>
+    <ContactForm onSubmit={this.formSubmit}/>
+      <lable>
+        Find contact by name
         <input
-      type="text"
-      name="name"
-      id={this.nameId}
-      pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-      title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-      required
-      value={this.state.name}
-      onChange={this.handleChange}
-      />
-        </label>
-        <label>Number
-        <input
-        type="tel"
-        name="number"
-        pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-        required
-        value={this.state.number}
-        onChange={this.handleChangeNumber}
+        type="text"
         />
-        </label>
-        <button type="submit">Add contact</button>
-      </form>
-      <ul>
-        <h2>Contacts</h2>
-        {this.state.contacts.map((contact)=> <li id={this.nameId}>{contact}</li>)}
-      </ul>
-  </div>)
-    }
+      </lable>
+      <h2>Contacts</h2>
+      <ContactList contacts={this.state.contacts} onDeleteContact={this.deleteContact}/>
+    </>);
+  }
 }
-
+ 
 export default App;
